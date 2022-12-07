@@ -6,7 +6,7 @@ import type { UseFormReturn, UseFormProps, FieldValues } from 'react-hook-form';
 
 import omit from 'lodash-es/omit';
 import pick from 'lodash-es/pick';
-import * as stableHash from 'stable-hash';
+import stableHash from 'stable-hash';
 
 import { ApiErrors, apiToFormErrors, useTempState } from '../utils';
 import DevTools from './DevTools';
