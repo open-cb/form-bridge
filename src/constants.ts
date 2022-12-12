@@ -10,4 +10,4 @@ export const useFormProps = [
   'delayError',
 ] as const;
 
-export const validationRuleProps = ['required', 'pattern', 'minLength', 'maxLength', 'min', 'max'] as const;
+export const validationRuleProps = ['required', 'pattern', 'minLength', 'maxLength', 'min', 'max', 'validate'] as const;

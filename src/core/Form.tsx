@@ -1,7 +1,7 @@
 import type { ComponentProps, ForwardedRef, MutableRefObject } from 'react';
-import { forwardRef, useEffect, useRef } from 'react';
+import { forwardRef, useEffect } from 'react';
 
-import type { FieldValues, UseFormProps, UseFormReturn } from 'react-hook-form';
+import type { FieldValues, UseFormProps, UseFormReturn, KeepStateOptions } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import omit from 'lodash-es/omit';
@@ -19,14 +19,7 @@ export type FormProps2<TFieldValues extends FieldValues = FieldValues, TContext 
   UseFormProps<TFieldValues, TContext> & {
     onSubmit?: (e: Record<string, any>, form: UseFormReturn<TFieldValues, TContext>) => void;
     errors?: ApiErrors;
-    enableReinitialize?:
-      | boolean
-      | {
-          keepDirtyValues?: boolean;
-          keepDefaultValues?: boolean;
-          keepValues?: boolean;
-          once?: boolean;
-        };
+    enableReinitialize?: boolean | KeepStateOptions;
     /**
      * innerRef holds the reference of html form element.
      * form instance returned by useForm is can be accessed via simple ref.
@@ -55,10 +48,10 @@ function Form<TFieldValues extends FieldValues = FieldValues, TContext = any>(
     reValidateMode: props.reValidateMode ?? 'onChange',
     defaultValues,
   });
-  const updatedOnce = useRef(false);
   const internalErrors = useTempState(errors);
 
   if (internalErrors.current && stableHash(internalErrors.current) !== (form.control as any)?._apiErrorsHash) {
+    // TODO: use proper context rather than appending form.control;
     (form.control as any)._apiErrors = apiToFormErrors(internalErrors.current);
     (form.control as any)._apiErrorsHash = stableHash(internalErrors.current);
   }
@@ -68,14 +61,13 @@ function Form<TFieldValues extends FieldValues = FieldValues, TContext = any>(
   useEffect(() => {
     if (!enableReinitialize || !defaultValues) return;
 
-    if (typeof enableReinitialize === 'object' && enableReinitialize.once && updatedOnce.current) {
+    if (typeof enableReinitialize === 'object') {
       return;
     }
 
     form.reset(defaultValues, {
       ...(typeof enableReinitialize === 'boolean' ? {} : enableReinitialize),
     });
-    updatedOnce.current = true;
   }, [form, defaultValues, enableReinitialize]);
 
   // sets ref to useForm return value
