@@ -10,23 +10,19 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'react-forms',
       formats: ['es'],
-      fileName: 'index'
+      fileName: 'index',
     },
     rollupOptions: {
-      external: [
-        'react',
-        'react/jsx-runtime',
-        'react-hook-form',
-      ],
+      external: ['react', 'react/jsx-runtime', 'react-hook-form'],
       output: {
         manualChunks: {
-          lodash: ['lodash-es']
+          lodash: ['lodash-es'],
         },
         globals: {
           react: 'react',
-          'react-hook-form': 'react-hook-form'
-        }
-      }
-    }
-  }
+          'react-hook-form': 'react-hook-form',
+        },
+      },
+    },
+  },
 });

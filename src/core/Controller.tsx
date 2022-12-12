@@ -10,23 +10,14 @@ import { messagifyValidationRules } from '../utils';
 export type Props<
   TFieldValues extends FieldValues = FieldValues,
   TName extends Path<TFieldValues> = Path<TFieldValues>,
-  > = Omit<ControllerProps<TFieldValues, TName>, 'rules'> &
-  ControllerProps<TFieldValues, TName>['rules'];
+> = Omit<ControllerProps<TFieldValues, TName>, 'rules'> & ControllerProps<TFieldValues, TName>['rules'];
 
-export const rulePropsList = [
-  'required',
-  'min',
-  'max',
-  'maxLength',
-  'minLength',
-  'pattern',
-  'validate',
-] as const;
+export const rulePropsList = ['required', 'min', 'max', 'maxLength', 'minLength', 'pattern', 'validate'] as const;
 
 export default function Controller<
   TFieldValues extends FieldValues = FieldValues,
   TName extends Path<TFieldValues> = Path<TFieldValues>,
-  >({ render, name, ...props }: Props<TFieldValues, TName>) {
+>({ render, name, ...props }: Props<TFieldValues, TName>) {
   const form = useFormContext();
   const rulesProps = pick(props, rulePropsList);
   const controllerProps = omit(props, rulePropsList);

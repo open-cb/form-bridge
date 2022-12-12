@@ -1,52 +1,38 @@
 import type { ComponentProps, ForwardedRef, MutableRefObject } from 'react';
-import { useEffect, useRef, forwardRef } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
 
-import { useForm, FormProvider } from 'react-hook-form';
-import type { UseFormReturn, UseFormProps, FieldValues } from 'react-hook-form';
+import type { FieldValues, UseFormProps, UseFormReturn } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 
 import omit from 'lodash-es/omit';
 import pick from 'lodash-es/pick';
 import stableHash from 'stable-hash';
 
-import { ApiErrors, apiToFormErrors, useTempState } from '../utils';
 import DevTools from './DevTools';
+import { ApiErrors, apiToFormErrors, useTempState } from '../utils';
+import { useFormProps } from '../constants';
 
-export type FormProps2<
-  TFieldValues extends FieldValues = FieldValues,
-  TContext = any,
-  > = Omit<ComponentProps<'form'>, 'onSubmit' | 'ref' | 'defaultValue'> &
+export type FormProps2<TFieldValues extends FieldValues = FieldValues, TContext = any> = Omit<
+  ComponentProps<'form'>,
+  'onSubmit' | 'ref' | 'defaultValue'
+> &
   UseFormProps<TFieldValues, TContext> & {
-  onSubmit?: (
-    e: Record<string, any>,
-    form: UseFormReturn<TFieldValues, TContext>,
-  ) => void;
-  errors?: ApiErrors;
-  enableReinitialize?:
-    | boolean
-    | {
-    keepDirtyValues?: boolean;
-    keepDefaultValues?: boolean;
-    keepValues?: boolean;
-    once?: boolean;
+    onSubmit?: (e: Record<string, any>, form: UseFormReturn<TFieldValues, TContext>) => void;
+    errors?: ApiErrors;
+    enableReinitialize?:
+      | boolean
+      | {
+          keepDirtyValues?: boolean;
+          keepDefaultValues?: boolean;
+          keepValues?: boolean;
+          once?: boolean;
+        };
+    /**
+     * innerRef holds the reference of html form element.
+     * form instance returned by useForm is can be accessed via simple ref.
+     * */
+    innerRef?: MutableRefObject<HTMLFormElement>;
   };
-  /**
-   * innerRef holds the reference of html form element.
-   * form instance returned by useForm is can be accessed via simple ref.
-   * */
-  innerRef?: MutableRefObject<HTMLFormElement>;
-};
-
-const useFormProps = [
-  'mode',
-  'reValidateMode',
-  'resolver',
-  'context',
-  'shouldFocusError',
-  'shouldUnregister',
-  'shouldUseNativeValidation',
-  'criteriaMode',
-  'delayError',
-] as const;
 
 function Form<TFieldValues extends FieldValues = FieldValues, TContext = any>(
   props: FormProps2<TFieldValues, TContext>,
@@ -61,10 +47,7 @@ function Form<TFieldValues extends FieldValues = FieldValues, TContext = any>(
     children,
     onSubmit = () => undefined,
     ...formProps
-  } = omit(props, useFormProps) as Omit<
-    FormProps2<TFieldValues, TContext>,
-    typeof useFormProps[number]
-    >;
+  } = omit(props, useFormProps) as Omit<FormProps2<TFieldValues, TContext>, typeof useFormProps[number]>;
 
   const form = useForm<TFieldValues, TContext>({
     ...pick(props, useFormProps),
@@ -75,10 +58,7 @@ function Form<TFieldValues extends FieldValues = FieldValues, TContext = any>(
   const updatedOnce = useRef(false);
   const internalErrors = useTempState(errors);
 
-  if (
-    internalErrors.current &&
-    stableHash(internalErrors.current) !== (form.control as any)?._apiErrorsHash
-  ) {
+  if (internalErrors.current && stableHash(internalErrors.current) !== (form.control as any)?._apiErrorsHash) {
     (form.control as any)._apiErrors = apiToFormErrors(internalErrors.current);
     (form.control as any)._apiErrorsHash = stableHash(internalErrors.current);
   }
@@ -88,11 +68,7 @@ function Form<TFieldValues extends FieldValues = FieldValues, TContext = any>(
   useEffect(() => {
     if (!enableReinitialize || !defaultValues) return;
 
-    if (
-      typeof enableReinitialize === 'object' &&
-      enableReinitialize.once &&
-      updatedOnce.current
-    ) {
+    if (typeof enableReinitialize === 'object' && enableReinitialize.once && updatedOnce.current) {
       return;
     }
 
@@ -116,13 +92,11 @@ function Form<TFieldValues extends FieldValues = FieldValues, TContext = any>(
       <form
         {...formProps}
         noValidate={noValidate}
-        onSubmit={form.handleSubmit(
-          (e) => {
-            (form.control as any)._apiErrors = null;
-            (form.control as any)._apiErrorsHash = null;
-            onSubmit(e, form);
-          },
-        )}
+        onSubmit={form.handleSubmit((e) => {
+          (form.control as any)._apiErrors = null;
+          (form.control as any)._apiErrorsHash = null;
+          onSubmit(e, form);
+        })}
         ref={innerRef}
       >
         {children}

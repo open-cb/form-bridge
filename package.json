@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "vite build",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "check:prettier": "prettier --check '**/*.{html,css,md,json,js,jsx,ts,tsx,cjs}'",
+    "fix:prettier": "prettier --write '**/*.{html,css,md,json,js,jsx,ts,tsx,cjs}'"
   },
   "type": "module",
   "repository": {
@@ -31,9 +33,10 @@
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
+    "prettier": "^2.8.1",
+    "semantic-release": "^19.0.5",
     "typescript": "^4.9.3",
     "vite": "^3.2.5",
-    "vite-plugin-dts": "^1.7.1",
-    "semantic-release": "^19.0.5"
+    "vite-plugin-dts": "^1.7.1"
   }
 }

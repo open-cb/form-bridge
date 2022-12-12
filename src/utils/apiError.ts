@@ -20,9 +20,7 @@ export function apiToFormErrors(errors: ApiErrors) {
             message: error[0],
           };
         } else if (typeof error[0] === 'object') {
-          formErrors[fieldName] = (error as ApiErrors[]).map((e) =>
-            handleObject(e),
-          ) as any;
+          formErrors[fieldName] = (error as ApiErrors[]).map((e) => handleObject(e)) as any;
         } else {
           // todo: maybe case case will never occur
         }
