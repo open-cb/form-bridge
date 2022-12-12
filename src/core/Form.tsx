@@ -61,10 +61,6 @@ function Form<TFieldValues extends FieldValues = FieldValues, TContext = any>(
   useEffect(() => {
     if (!enableReinitialize || !defaultValues) return;
 
-    if (typeof enableReinitialize === 'object') {
-      return;
-    }
-
     form.reset(defaultValues, {
       ...(typeof enableReinitialize === 'boolean' ? {} : enableReinitialize),
     });

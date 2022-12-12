@@ -4,6 +4,7 @@
   "description": "Utilities for react forms",
   "main": "index.js",
   "scripts": {
+    "start": "vite -c vite.dev.config.ts",
     "build": "vite build",
     "semantic-release": "semantic-release",
     "check:prettier": "prettier --check '**/*.{html,css,md,json,js,jsx,ts,tsx,cjs}'",
@@ -32,11 +33,18 @@
     "stable-hash": "^0.0.2"
   },
   "devDependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@mui/material": "^5.10.17",
+    "@types/lodash-es": "^4.17.6",
     "@types/react": "^18.0.26",
+    "@types/react-dom": "^18.0.9",
+    "@vitejs/plugin-react": "^3.0.0",
     "prettier": "^2.8.1",
+    "react-dom": "^18.2.0",
     "semantic-release": "^19.0.5",
     "typescript": "^4.9.3",
-    "vite": "^3.2.5",
+    "vite": "^4.0.0",
     "vite-plugin-dts": "^1.7.1"
   }
 }
