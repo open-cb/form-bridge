@@ -1,22 +1,22 @@
+import type { FieldValues } from 'react-hook-form';
 import { Controller as BaseController, useFormContext } from 'react-hook-form';
-import type { FieldValues, Path } from 'react-hook-form';
 
 import get from 'lodash-es/get';
 import pick from 'lodash-es/pick';
 import omit from 'lodash-es/omit';
 import unset from 'lodash-es/unset';
 
-import { messagifyValidationRules, render, getDisplayName } from '../utils';
+import { forwardRefWithAs, getDisplayName, messagifyValidationRules, render } from '../utils';
 import { validationRuleProps } from '../constants';
 import { Props } from '../types';
-import React, { ElementType, Fragment } from 'react';
+import React, { ElementType, ForwardedRef, Fragment } from 'react';
 import { RegisterOptions } from 'react-hook-form/dist/types/validator';
-import { Control, FieldPathValue, UseFormStateReturn } from 'react-hook-form/dist/types';
+import { Control, FieldPath, FieldPathValue, UseFormStateReturn } from 'react-hook-form/dist/types';
 import { ControllerFieldState, ControllerRenderProps } from 'react-hook-form/dist/types/controller';
 
 interface RenderProps<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends Path<TFieldValues> = Path<TFieldValues>,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > {
   field: ControllerRenderProps<TFieldValues, TName>;
   fieldState: ControllerFieldState;
@@ -25,7 +25,7 @@ interface RenderProps<
 
 export type ComponentProps<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends Path<TFieldValues> = Path<TFieldValues>,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
   TTag extends ElementType = typeof Fragment
 > =
   {
@@ -39,11 +39,11 @@ export type ComponentProps<
   & Omit<RegisterOptions<TFieldValues, TName>, 'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'>
   & Props<TTag>;
 
-export default function Controller<
+export default forwardRefWithAs(function Controller<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends Path<TFieldValues> = Path<TFieldValues>,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
   TTag extends ElementType = typeof Fragment
->(props: ComponentProps<TFieldValues, TName, TTag>) {
+>(props: ComponentProps<TFieldValues, TName, TTag>, ref: ForwardedRef<HTMLElement>) {
   const form = useFormContext();
   const rulesProps = pick(props, validationRuleProps);
   const cProps = pick(props, ['shouldUnregister', 'defaultValue'] as const);
@@ -79,7 +79,7 @@ export default function Controller<
             }
 
             return Reflect.get(target, prop, receiver);
-          }
+          },
         });
 
         if (props.as) {
@@ -87,12 +87,12 @@ export default function Controller<
             ...validationRuleProps,
             'shouldUnregister', 'defaultValue', 'name', 'propsAdapter',
           ]);
-          let ourProps = {};
+          let ourProps = {ref};
 
           // compute component props by using provide propsAdapter prop
           // or by using global component propsAdapter config
           if (props.propsAdapter) {
-            ourProps = props.propsAdapter(renderProps as any);
+            ourProps = { ref, ...props.propsAdapter(renderProps as any) };
           } else {
             console.warn(
               `[Controller.Renderer]: No propsAdaptor found for element ${getDisplayName(props.as)} ` +
@@ -112,4 +112,4 @@ export default function Controller<
       }}
     />
   );
-}
+});

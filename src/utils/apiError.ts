@@ -14,9 +14,7 @@ export function apiToFormErrors(errors: ApiErrors) {
         if (typeof error[0] === 'string') {
           formErrors[fieldName] = {
             type: 'validate',
-            types: {
-              validate: error as string[],
-            },
+            types: (error as string[]).reduce((acc, el, i) => ({...acc, [`error${i}`]: el}), {}),
             message: error[0],
           };
         } else if (typeof error[0] === 'object') {

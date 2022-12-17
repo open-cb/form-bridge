@@ -41,22 +41,19 @@ export type PropsForFeatures<T extends Features> = XOR<
 >
 
 export function render<TFeature extends Features, TTag extends ElementType, TSlot>({
-                                                                                     ourProps,
-                                                                                     theirProps,
-                                                                                     slot,
-                                                                                     defaultTag,
-                                                                                     name,
-                                                                                   }: {
+  ourProps,
+  theirProps,
+  slot,
+  defaultTag,
+  name,
+}: {
   ourProps: Expand<Props<TTag, any>>
   theirProps: Expand<Props<TTag, any>>
   slot?: TSlot
   defaultTag: ElementType
   name: string
 }) {
-  let props = mergeProps(theirProps, ourProps)
-
-  // No features enabled, just render
-  return _render(props, slot, defaultTag, name)
+  return _render(mergeProps(theirProps, ourProps), slot, defaultTag, name)
 }
 
 function _render<TTag extends ElementType, TSlot>(

@@ -1,7 +1,7 @@
-import type { ComponentProps, ForwardedRef, MutableRefObject } from 'react';
-import { forwardRef, useEffect } from 'react';
+import type { FormEventHandler, ForwardedRef, MutableRefObject } from 'react';
+import { ElementType, Suspense } from 'react';
 
-import type { FieldValues, UseFormProps, UseFormReturn, KeepStateOptions } from 'react-hook-form';
+import type { FieldValues, SubmitErrorHandler, SubmitHandler, UseFormProps, UseFormReturn } from 'react-hook-form';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import omit from 'lodash-es/omit';
@@ -9,90 +9,86 @@ import pick from 'lodash-es/pick';
 import stableHash from 'stable-hash';
 
 import DevTools from './DevTools';
-import { ApiErrors, apiToFormErrors, useTempState } from '../utils';
+import { ApiErrors, apiToFormErrors, forwardRefWithAs, render, useTempState } from '../utils';
 import { useFormProps } from '../constants';
+import { Props } from '../types';
 
-export type FormProps2<TFieldValues extends FieldValues = FieldValues, TContext = any> = Omit<
-  ComponentProps<'form'>,
-  'onSubmit' | 'ref' | 'defaultValue'
-> &
-  UseFormProps<TFieldValues, TContext> & {
-    onSubmit?: (e: Record<string, any>, form: UseFormReturn<TFieldValues, TContext>) => void;
-    errors?: ApiErrors;
-    enableReinitialize?: boolean | KeepStateOptions;
-    /**
-     * innerRef holds the reference of html form element.
-     * form instance returned by useForm is can be accessed via simple ref.
-     * */
-    innerRef?: MutableRefObject<HTMLFormElement>;
-  };
+export type FormProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TContext = any,
+  TTag extends ElementType<{ onSubmit: FormEventHandler }> = 'form'
+> =
+  UseFormProps<TFieldValues, TContext>
+  & Props<TTag, 'onSubmit' | 'ref' | 'defaultValue'>
+  & {
+  onSubmit?: SubmitHandler<TFieldValues>;
+  onInvalid?: SubmitErrorHandler<TFieldValues>;
+  errors?: ApiErrors;
+  formRef?: ForwardedRef<UseFormReturn<TFieldValues, TContext>>,
+};
 
 function Form<TFieldValues extends FieldValues = FieldValues, TContext = any>(
-  props: FormProps2<TFieldValues, TContext>,
-  ref: ForwardedRef<UseFormReturn<TFieldValues, TContext>>,
+  props: FormProps<TFieldValues, TContext>,
+  ref: ForwardedRef<HTMLElement>,
 ) {
   const {
     errors,
-    enableReinitialize,
-    defaultValues,
-    innerRef,
-    noValidate,
     children,
     onSubmit = () => undefined,
-    ...formProps
-  } = omit(props, useFormProps) as Omit<FormProps2<TFieldValues, TContext>, typeof useFormProps[number]>;
+    onInvalid,
+    formRef,
+    ...theirProps
+  } = omit(props, useFormProps) as Omit<FormProps<TFieldValues, TContext>, typeof useFormProps[number]>;
 
   const form = useForm<TFieldValues, TContext>({
     ...pick(props, useFormProps),
     mode: props.mode ?? 'onBlur',
     reValidateMode: props.reValidateMode ?? 'onChange',
-    defaultValues,
   });
-  const internalErrors = useTempState(errors);
 
+  const internalErrors = useTempState(errors);
   if (internalErrors.current && stableHash(internalErrors.current) !== (form.control as any)?._apiErrorsHash) {
     // TODO: use proper context rather than appending form.control;
     (form.control as any)._apiErrors = apiToFormErrors(internalErrors.current);
     (form.control as any)._apiErrorsHash = stableHash(internalErrors.current);
   }
 
-  // set the defaultValues to form values only if defaultValues
-  // are changed and enableReinitialize is true.
-  useEffect(() => {
-    if (!enableReinitialize || !defaultValues) return;
-
-    form.reset(defaultValues, {
-      ...(typeof enableReinitialize === 'boolean' ? {} : enableReinitialize),
-    });
-  }, [form, defaultValues, enableReinitialize]);
-
-  // sets ref to useForm return value
-  if (ref) {
-    if (typeof ref === 'object') {
-      ref.current = form;
+  if (formRef) {
+    if (typeof ref === 'function') {
+      (formRef as ((instance: UseFormReturn<TFieldValues, TContext> | null) => void))(form);
     } else {
-      ref(form);
+      (formRef as MutableRefObject<UseFormReturn<TFieldValues, TContext>>).current = form;
     }
   }
 
   return (
     <FormProvider {...form}>
-      <form
-        {...formProps}
-        noValidate={noValidate}
-        onSubmit={form.handleSubmit((e) => {
-          (form.control as any)._apiErrors = null;
-          (form.control as any)._apiErrorsHash = null;
-          onSubmit(e, form);
-        })}
-        ref={innerRef}
-      >
-        {children}
-      </form>
+      {render({
+        defaultTag: 'form',
+        name: 'Form.Render',
+        theirProps: {
+          ...theirProps,
+          children,
+        },
+        ourProps: {
+          ref,
+          onSubmit: form.handleSubmit(
+            (data, event) => {
+              Promise.resolve(onSubmit(data, event)).then(() => {
+                (form.control as any)._apiErrors = null;
+                (form.control as any)._apiErrorsHash = null;
+              });
+            },
+            onInvalid,
+          ),
+        },
+      })}
 
-      {import.meta.env.DEV && <DevTools control={form.control} />}
+      <Suspense fallback={<span />}>
+        {import.meta.env.DEV && <DevTools control={form.control} />}
+      </Suspense>
     </FormProvider>
   );
 }
 
-export default forwardRef(Form);
+export default forwardRefWithAs(Form);

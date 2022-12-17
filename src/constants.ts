@@ -1,6 +1,9 @@
 export const useFormProps = [
   'mode',
   'reValidateMode',
+  'defaultValues',
+  'values',
+  'resetOptions',
   'resolver',
   'context',
   'shouldFocusError',
