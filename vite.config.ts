@@ -13,10 +13,15 @@ export default defineConfig({
       fileName: 'index',
     },
     rollupOptions: {
-      external: ['react', 'react/jsx-runtime', 'react-hook-form'],
+      external: [
+        'react',
+        'react/jsx-runtime',
+        'react-hook-form',
+        '@hookform/devtools',
+      ],
       output: {
         manualChunks: {
-          lodash: ['lodash-es'],
+          lodash: ['lodash-es', 'lodash'],
         },
         globals: {
           react: 'react',

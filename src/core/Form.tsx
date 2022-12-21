@@ -85,7 +85,7 @@ function Form<TFieldValues extends FieldValues = FieldValues, TContext = any>(
       })}
 
       <Suspense fallback={<span />}>
-        {import.meta.env.DEV && <DevTools control={form.control} />}
+        <DevTools control={form.control} />
       </Suspense>
     </FormProvider>
   );

@@ -7,8 +7,8 @@
     "start": "vite -c vite.dev.config.ts",
     "build": "vite build",
     "semantic-release": "semantic-release",
-    "check:prettier": "prettier --check '**/*.{html,css,md,json,js,jsx,ts,tsx,cjs}'",
-    "fix:prettier": "prettier --write '**/*.{html,css,md,json,js,jsx,ts,tsx,cjs}'"
+    "check": "prettier --check '**/*.{html,css,md,json,js,jsx,ts,tsx,cjs}'",
+    "fix": "prettier --write '**/*.{html,css,md,json,js,jsx,ts,tsx,cjs}'"
   },
   "type": "module",
   "repository": {
@@ -23,11 +23,16 @@
   },
   "homepage": "https://github.com/cb-pkg/react-forms#readme",
   "peerDependencies": {
+    "@hookform/devtools": "^4.2.3",
     "react": "^18.0.0 || ^17.0.0",
     "react-hook-form": "^7.41.0"
   },
+  "peerDependenciesMeta": {
+    "@hookform/devtools": {
+      "optional": true
+    }
+  },
   "dependencies": {
-    "@hookform/devtools": "^4.2.3",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "stable-hash": "^0.0.2"
