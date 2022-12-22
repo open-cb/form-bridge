@@ -1,4 +1,6 @@
-import { ReactNode, ReactElement, JSXElementConstructor } from 'react'
+import { ReactNode, JSXElementConstructor, ElementType } from 'react';
+import { FieldPath, FieldValues } from 'react-hook-form';
+import { RenderProps } from './core/Controller';
 
 export type ReactTag = keyof JSX.IntrinsicElements | JSXElementConstructor<any>
 
@@ -47,3 +49,11 @@ export type XOR<T, U> = T | U extends __
       : T | U extends object
         ? (Without<T, U> & U) | (Without<U, T> & T)
         : T | U
+
+export interface PropsAdaptor<
+  TTag extends ElementType = ElementType,
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> {
+  (renderProps: RenderProps<TFieldValues, TName>): Partial<Props<TTag>>;
+}

@@ -184,13 +184,3 @@ export function compact<T extends Record<any, any>>(object: T) {
   }
   return clone;
 }
-
-export function getDisplayName(Component: any): string {
-  return (
-    Component.displayName ||
-    Component.name ||
-    (typeof Component === 'string' && Component.length > 0
-      ? Component
-      : 'Unknown')
-  );
-}
