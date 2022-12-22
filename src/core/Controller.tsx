@@ -108,10 +108,6 @@ export default forwardRefWithAs(function Controller<
             const configPropsAdaptor = propsAdapters && getAdaptorForComponent(propsAdapters, props.as);
 
             if (!configPropsAdaptor) {
-              console.warn(
-                `[Controller.Renderer]: No propsAdaptor found for element ${getDisplayName(props.as)} ` +
-                `while rending Controller for '${props.name}' field`,
-              );
               ourProps = { ref, value: renderProps.field.value, onChange: renderProps.field.onChange };
             } else {
               ourProps = { ref, ...configPropsAdaptor(renderProps as any) };
