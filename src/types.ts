@@ -55,3 +55,13 @@ export type PropsAdaptor<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > = (renderProps: RenderProps<TFieldValues, TName>) => Partial<Props<TTag>>;
+
+export interface PropsAdaptorItem<
+  TTag extends ElementType = ElementType,
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+> {
+  component: TTag,
+  adaptor?: PropsAdaptor<TTag, TFieldValues, TName>,
+  defaultProps?: Partial<Props<TTag>>,
+}

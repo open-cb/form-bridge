@@ -1,6 +1,5 @@
 import type { ElementType } from 'react';
-import { PropsAdaptorItem } from '../core/FormConfig';
-import { PropsAdaptor } from '../types';
+import { PropsAdaptor, PropsAdaptorItem } from '../types';
 
 export function getDisplayName(Component: any): string {
   return (
@@ -12,11 +11,10 @@ export function getDisplayName(Component: any): string {
   );
 }
 
-export function getAdaptorForComponent<
+export function getConfigForComponent<
   TTag extends ElementType
->(config: PropsAdaptorItem[], component: ElementType): PropsAdaptor<TTag> | undefined {
-
+>(config: PropsAdaptorItem<TTag>[], component: ElementType): PropsAdaptorItem<TTag> | undefined {
   return config.find(({ component: cType }) => {
     return getDisplayName(component) === getDisplayName(cType);
-  })?.adaptor as PropsAdaptor<TTag>;
+  }) as PropsAdaptorItem<TTag>;
 }

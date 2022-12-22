@@ -1,17 +1,13 @@
-import type { ElementType, PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 import { createContext, useContext } from 'react';
-import type { ComponentProps } from './Controller';
-import type { PropsAdaptor } from '../types';
 
-export interface PropsAdaptorItem {
-  component: ElementType,
-  adaptor: PropsAdaptor,
-}
+import type { BaseControllerProps } from './Controller';
+import type { PropsAdaptorItem } from '../types';
 
 
 interface Components {
   Controller?: {
-    defaultProps?: Partial<ComponentProps>,
+    defaultProps?: Partial<BaseControllerProps>,
     propsAdapters?: PropsAdaptorItem[]
   },
 }

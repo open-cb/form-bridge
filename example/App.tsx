@@ -1,5 +1,4 @@
 import {
-  Autocomplete,
   Checkbox,
   FormControlLabel,
   MenuItem,
