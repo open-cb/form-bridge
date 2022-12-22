@@ -9,8 +9,8 @@ import merge from 'lodash-es/merge';
 
 import { forwardRefWithAs, getAdaptorForComponent, getDisplayName, messagifyValidationRules, render } from '../utils';
 import { validationRuleProps } from '../constants';
-import { Props, PropsAdaptor } from '../types';
-import React, { ElementType, ForwardedRef, Fragment } from 'react';
+import { Props, PropsAdaptor, ReactTag } from '../types';
+import React, { ForwardedRef, Fragment } from 'react';
 import { RegisterOptions } from 'react-hook-form/dist/types/validator';
 import { Control, FieldPath, FieldPathValue, UseFormStateReturn } from 'react-hook-form/dist/types';
 import { ControllerFieldState, ControllerRenderProps } from 'react-hook-form/dist/types/controller';
@@ -28,15 +28,15 @@ export interface RenderProps<
 type BaseComponentProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-  TTag extends ElementType = typeof Fragment
+  TTag extends ReactTag = typeof Fragment
 > = Omit<RegisterOptions<TFieldValues, TName>, 'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'>
   & Props<TTag>
 
 export interface ComponentProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-  TTag extends ElementType = typeof Fragment
-> extends BaseComponentProps {
+  TTag extends ReactTag = typeof Fragment
+> {
   name: TName;
   shouldUnregister?: boolean;
   defaultValue?: FieldPathValue<TFieldValues, TName>;
@@ -48,8 +48,8 @@ export interface ComponentProps<
 export default forwardRefWithAs(function Controller<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-  TTag extends ElementType = typeof Fragment
->(props: ComponentProps<TFieldValues, TName, TTag>, ref: ForwardedRef<HTMLElement>) {
+  TTag extends ReactTag = typeof Fragment
+>(props: ComponentProps<TFieldValues, TName, TTag> & BaseComponentProps<TFieldValues, TName, TTag>, ref: ForwardedRef<HTMLElement>) {
   const form = useFormContext();
   const config = useFormConfig();
 

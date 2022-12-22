@@ -27,7 +27,7 @@ type CleanProps<
   : Omit<PropsOf<TTag>, TOmitableProps | PropsWeControl>
 
 // Add certain props that we control
-interface OurProps<TTag extends ReactTag> {
+export interface OurProps<TTag extends ReactTag> {
   as?: TTag;
   children?: ReactNode;
   refName?: string
@@ -50,10 +50,8 @@ export type XOR<T, U> = T | U extends __
         ? (Without<T, U> & U) | (Without<U, T> & T)
         : T | U
 
-export interface PropsAdaptor<
+export type PropsAdaptor<
   TTag extends ElementType = ElementType,
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-> {
-  (renderProps: RenderProps<TFieldValues, TName>): Partial<Props<TTag>>;
-}
+> = (renderProps: RenderProps<TFieldValues, TName>) => Partial<Props<TTag>>;

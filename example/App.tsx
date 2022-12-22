@@ -10,15 +10,14 @@ import {
   TextField, ToggleButton, ToggleButtonGroup,
 } from '@mui/material';
 
-import { Form } from '../dist';
-import { Controller } from '../src';
+import { Form, Controller } from '../dist';
 
 
 export default function App() {
   return (
     <div className='App'>
 
-      <Form onSubmit={(data) => console.log(data)}>
+      <Form onSubmit={(data: Record<string, any>) => console.log(data)}>
         <div>
           <Controller
             as={TextField}
