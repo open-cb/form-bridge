@@ -1,5 +1,5 @@
 {
-  "name": "react-forms",
+  "name": "@cb-pkg/react-forms",
   "version": "0.0.0-development",
   "description": "Utilities for react forms",
   "main": "index.js",
@@ -11,6 +11,9 @@
     "fix": "prettier --write '**/*.{html,css,md,json,js,jsx,ts,tsx,cjs}'"
   },
   "type": "module",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/cb-pkg/react-forms.git"
