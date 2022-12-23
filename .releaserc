@@ -13,7 +13,7 @@
       "assets": "dist/*.tgz"
     }],
     ["@semantic-release/exec", {
-      "publishCmd": "npm publish"
+      "publishCmd": "echo $NODE_AUTH_TOKEN && npm publish"
     }]
   ]
 }
