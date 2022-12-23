@@ -11,20 +11,23 @@ type FormProps = Omit<ComponentProps<'form'>, 'method' | 'action' | 'onSubmit' |
 export interface PostableFormProps<
   SubmitResponse = unknown,
   TFieldValues extends FieldValues = FieldValues,
+  TransformedData = unknown,
 > extends FormProps {
   method?: Method;
   action: string;
-  onSubmit?: (data: TFieldValues, conf: { method: Method, action: string }, event?: React.BaseSyntheticEvent) => Promise<SubmitResponse> | undefined
+  onSubmit?: (data: TransformedData, conf: { method: Method, action: string }, event?: React.BaseSyntheticEvent) => Promise<SubmitResponse> | undefined
   onInvalid?: (error: FieldErrors<TFieldValues>, event?: React.BaseSyntheticEvent) => any | Promise<any>
   onSubmitSuccess?: (res: SubmitResponse | undefined) => any | Promise<any>,
   onSubmitError?: (err: unknown) => any,
   apiErrorAdaptor?: (err: unknown) => FieldErrors | undefined,
+  transformData?: (data: TFieldValues) => TransformedData,
 }
 
 export default forwardRef(function PostableForm<
   SubmitResponse = unknown,
-  TFieldValues extends FieldValues = FieldValues
->(props: PropsWithChildren<PostableFormProps<SubmitResponse, TFieldValues>>, ref: ForwardedRef<HTMLFormElement>) {
+  TFieldValues extends FieldValues = FieldValues,
+  TransformedData = unknown,
+>(props: PropsWithChildren<PostableFormProps<SubmitResponse, TFieldValues, TransformedData>>, ref: ForwardedRef<HTMLFormElement>) {
   const form = useFormContext<TFieldValues>();
   const { components } = useFormConfig();
   const staticErrors = useStaticErrors();
@@ -33,6 +36,7 @@ export default forwardRef(function PostableForm<
     method = 'post', action,
     onInvalid, onSubmit, onSubmitSuccess, onSubmitError,
     apiErrorAdaptor,
+    transformData = (data: TFieldValues) => data,
     ...restProps
   } = merge(props, components?.PostableForm?.defaultProps);
 
@@ -41,12 +45,12 @@ export default forwardRef(function PostableForm<
       {...restProps}
       ref={ref}
       onSubmit={form.handleSubmit(async (data, event) => {
-        let response: SubmitResponse | undefined;
+        let response: any;
 
         try {
-          response = await onSubmit?.(data, { method, action }, event);
+          response = await onSubmit?.(transformData(data), { method, action }, event);
         } catch (err: any) {
-          staticErrors.setErrors(apiErrorAdaptor?.(err))
+          staticErrors.setErrors(apiErrorAdaptor?.(err));
           return onSubmitError?.(err);
         }
 
