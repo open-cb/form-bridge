@@ -144,6 +144,13 @@ function mergeProps(...listOfProps: Props<any, any>[]) {
 
   // Merge event handlers
   for (let eventName in eventHandlers) {
+    let handlers = eventHandlers[eventName];
+
+    if (handlers.length === 1) {
+      (target as any)[eventName] = handlers[0];
+      continue;
+    }
+
     Object.assign(target, {
       [eventName](event: { nativeEvent?: Event; defaultPrevented: boolean }, ...args: any[]) {
         let handlers = eventHandlers[eventName];

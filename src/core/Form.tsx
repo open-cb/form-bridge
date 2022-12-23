@@ -37,7 +37,7 @@ function Form<TFieldValues extends FieldValues = FieldValues, TContext = any>(
   ref: ForwardedRef<HTMLElement>,
 ) {
   const { components } = useFormConfig();
-  props = merge(props, components?.Controller?.defaultProps);
+  props = merge({ ...props }, components?.Form?.defaultProps);
   const { formRef, enableDevtools = false, ...theirProps } = omit(props, useFormProps);
 
   const form = useForm<TFieldValues, TContext>({

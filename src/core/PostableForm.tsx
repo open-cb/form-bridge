@@ -14,7 +14,7 @@ export interface PostableFormProps<
 > extends FormProps {
   method?: Method;
   action: string;
-  onSubmit?: (data: TFieldValues, conf: { method: Method, action: string }, event?: React.BaseSyntheticEvent) => Promise<SubmitResponse>
+  onSubmit?: (data: TFieldValues, conf: { method: Method, action: string }, event?: React.BaseSyntheticEvent) => Promise<SubmitResponse> | undefined
   onInvalid?: (error: FieldErrors<TFieldValues>, event?: React.BaseSyntheticEvent) => any | Promise<any>
   onSubmitSuccess?: (res: SubmitResponse | undefined) => any | Promise<any>,
   onSubmitError?: (err: unknown) => any,
@@ -50,7 +50,7 @@ export default forwardRef(function PostableForm<
           return onSubmitError?.(err);
         }
 
-        await onSubmitSuccess?.(response).catch();
+        await onSubmitSuccess?.(response)?.catch();
         staticErrors.setErrors(undefined);
       }, onInvalid)}
     />

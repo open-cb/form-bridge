@@ -18,6 +18,18 @@ export default function App() {
       <FormConfig
         config={{
           components: {
+            Form: {
+              defaultProps: {
+                onSubmit: (data, {method, action}) => {
+                  console.log('here', method, action);
+
+                  return new Promise((res) => {
+                    setTimeout(() => res(data), 1000);
+                  });
+                },
+
+              }
+            },
             Controller: {
               propsAdapters: [
                 {
@@ -40,13 +52,12 @@ export default function App() {
           },
         }}
       >
-        <Form onSubmit={(data: Record<string, any>) => console.log(data)}>
+        <Form action="/test" onSubmitSuccess={(x) => console.log(x)}>
           <div>
             <Controller
               as={TextField}
               name='textField'
               label='Test Field'
-              required
             />
           </div>
 
@@ -56,7 +67,6 @@ export default function App() {
               name='selectField'
               label='Test Field'
               select
-              required
             >
               <MenuItem value='op1'>Option 1</MenuItem>
               <MenuItem value='op2'>Option 2</MenuItem>
