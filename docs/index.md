@@ -1,4 +1,4 @@
-# Getting Started
+# Introduction
 
 ## Installation
 
@@ -20,157 +20,24 @@ You can optionally also install devtools:
 npm install @hookform/devtools --save-dev
 ```
 
-## Quick start with MUI
-
-Define the global config:
+## Usage
 
 === "Typescript"
 
     ``` ts title="formConfig.ts"
-    import { Rating, TextField } from '@mui/material';
-
-    import type { FormConfigType } from '@cb-pkg/react-forms';
-    import {
-      drfErrorsAdaptor
-    } from '@cb-pkg/react-forms/adaptors/django';
-    import {
-      TextFieldPropsAdaptor,
-      RatingPropsAdaptor
-    } from '@cb-pkg/react-forms/adaptors/mui';
-    
+    import {Form, Controller} from '@cb-pkg/form-bridge';
+    import {TextField, Button} from '@mui/material';
     import Axios from 'axios';
     
+    import {drfErrorsAdaptor} from '@cb-pkg/form-bridge/adaptors/django';
+    import {TextFieldPropsAdaptor} from '@cb-pkg/form-bridge/adaptors/mui';
     
-    export default {
-      components: {
-        Form: {
-          defaultProps: {
-            onSubmit: (data, { method, action }, e) => (
-              Axios(action, { method, data })
-            ),
-            apiErrorAdaptor: drfErrorsAdaptor,
-            enableDevtools: true, // (1)!
-          }
-        },
-        Controller: {
-          propsAdapters: [
-            {
-              component: TextField,
-              adaptor: TextFieldPropsAdaptor,
-            },
-            {
-              component: Rating,
-              adaptor: RatingPropsAdaptor,
-            },
-          ],
-        },
-      }
-    } as FormConfigType;
-    ```
-
-    1. If you wan to enable devtools for all the forms. It also requires `@hookform/devtools` to be installed.
-
-=== "Javascript"
-
-    ``` js title="formConfig.js"
-    import { Rating, TextField } from '@mui/material';
-
-    import {
-      drfErrorsAdaptor
-    } from '@cb-pkg/react-forms/adaptors/django';
-    import {
-      TextFieldPropsAdaptor,
-      RatingPropsAdaptor
-    } from '@cb-pkg/react-forms/adaptors/mui';
-    
-    import Axios from 'axios';
-    
-    
-    export default {
-      components: {
-        Form: {
-          defaultProps: {
-            onSubmit: (data, { method, action }, e) => (
-              Axios(action, { method, data })
-            ),
-            apiErrorAdaptor: drfErrorsAdaptor,
-            enableDevtools: true, // (1)!
-          }
-        },
-        Controller: {
-          propsAdapters: [
-            {
-              component: TextField,
-              adaptor: TextFieldPropsAdaptor,
-            },
-            {
-              component: Rating,
-              adaptor: RatingPropsAdaptor,
-            },
-          ],
-        },
-      }
-    };
-    ```
-
-    1. If you wan to enable devtools for all the forms. It also requires `@hookform/devtools` to be installed.
-
-Provide the form config at the root of app, like so:
-
-=== "Typescript"
-
-    ``` jsx title="main.tsx" hl_lines="7 12"
-    import { FormConfig } from '@cb-pkg/react-forms';
-    import formConfig from './formConfig';
-    // ...other imports and code
-    
-    ReactDOM.createRoot(document.getElementById('root')).render(
-      <React.StrictMode>
-        <FormConfig config={formConfig}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <App />
-          </ThemeProvider>
-        </FormConfig>
-      </React.StrictMode>,
-    );
-    ```
-
-=== "Javascript"
-
-    ``` jsx title="main.jsx" hl_lines="7 12"
-    import { FormConfig } from '@cb-pkg/react-forms';
-    import formConfig from './formConfig';
-    // ...other imports and code
-    
-    ReactDOM.createRoot(document.getElementById('root')).render(
-      <React.StrictMode>
-        <FormConfig config={formConfig}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <App />
-          </ThemeProvider>
-        </FormConfig>
-      </React.StrictMode>,
-    );
-    ```
-
-Finally, use it in your component, for example let build a login component here:
-
-=== "Typescript"
-
-    ``` jsx title="Login.tsx"
-    import React from 'react';
-    import { Controller, Form } from '@cb-pkg/react-forms';
-    import { Button, TextField } from '@mui/material';
-    import { useNavigate } from 'react-router-dom';
-    
-    export default function Login() {
-      const navigate = useNavigate();
-
+    function Foo() {
       return (
         <Form
           action="/api/login"
+          onSubmit={(data, {method, action}) => Axios(action, { method, data })}
+          apiErrorAdaptor={drfErrorsAdaptor}
           onSubmitSuccess={(res: any) => {
             localStorage.setItem('accessToken', res.data.accessToken);
             navigate('/');
@@ -178,22 +45,24 @@ Finally, use it in your component, for example let build a login component here:
         >
           <Controller
             as={TextField}
-            name='email'
-            label='Email'
-            pattern='email'
+            defaultValue=""
+            label="Email"
+            name="email"
+            pattern="email"
+            propsAdaptor={TextFieldPropsAdaptor}
             required
           />
 
           <Controller
             as={TextField}
-            name='password'
-            label='Password'
+            defaultValue=""
+            label="Password"
+            name="email"
+            propsAdaptor={TextFieldPropsAdaptor}
             required
           />
-
-          <Button type='submit' variant='contained'>
-            Login
-          </Button>
+      
+          <Button type="submit">Login</Button>
         </Form>
       );
     }
@@ -201,18 +70,20 @@ Finally, use it in your component, for example let build a login component here:
 
 === "Javascript"
 
-    ``` jsx title="Login.jsx"
-    import React from 'react';
-    import { Controller, Form } from '@cb-pkg/react-forms';
-    import { Button, TextField } from '@mui/material';
-    import { useNavigate } from 'react-router-dom';
+    ``` js title="formConfig.js"
+    import {Form, Controller} from '@cb-pkg/form-bridge';
+    import {TextField, Button} from '@mui/material';
+    import Axios from 'axios';
     
-    export default function Login() {
-      const navigate = useNavigate();
-
+    import {drfErrorsAdaptor} from '@cb-pkg/form-bridge/adaptors/django';
+    import {TextFieldPropsAdaptor} from '@cb-pkg/form-bridge/adaptors/mui';
+    
+    function Foo() {
       return (
         <Form
           action="/api/login"
+          onSubmit={(data, {method, action}) => Axios(action, { method, data })}
+          apiErrorAdaptor={drfErrorsAdaptor}
           onSubmitSuccess={(res) => {
             localStorage.setItem('accessToken', res.data.accessToken);
             navigate('/');
@@ -220,23 +91,28 @@ Finally, use it in your component, for example let build a login component here:
         >
           <Controller
             as={TextField}
-            name='email'
-            label='Email'
-            pattern='email'
+            defaultValue=""
+            label="Email"
+            name="email"
+            pattern="email"
+            propsAdaptor={TextFieldPropsAdaptor}
             required
           />
 
           <Controller
             as={TextField}
-            name='password'
-            label='Password'
+            defaultValue=""
+            label="Password"
+            name="email"
+            propsAdaptor={TextFieldPropsAdaptor}
             required
           />
-
-          <Button type='submit' variant='contained'>
-            Login
-          </Button>
+      
+          <Button type="submit">Login</Button>
         </Form>
       );
-    }
+    
     ```
+
+As you can see that some props here will become very redundant when multiple instances of form will be used.
+This redundancy can be removed by moving redundant props to global `FormConfig`. See it in next section.
