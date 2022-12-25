@@ -111,7 +111,7 @@ npm install @hookform/devtools --save-dev
           <Button type="submit">Login</Button>
         </Form>
       );
-    
+    }
     ```
 
 As you can see that some props here will become very redundant when multiple instances of form will be used.
