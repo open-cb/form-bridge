@@ -20,18 +20,18 @@ interface Components {
   },
 }
 
-export interface FormConfig {
+export interface FormConfigType {
   components?: Components,
 }
 
-const formConfigContext = createContext<FormConfig>({});
+const formConfigContext = createContext<FormConfigType>({});
 
 
 export const useFormConfig = () => useContext(formConfigContext);
 
 
 interface Props {
-  config: FormConfig;
+  config: FormConfigType;
 }
 
 export default function FormConfig({ config, children }: PropsWithChildren<Props>) {

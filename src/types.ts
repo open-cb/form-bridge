@@ -16,7 +16,7 @@ export type PropsOf<TTag extends ReactTag> = TTag extends React.ElementType
   ? React.ComponentProps<TTag>
   : never
 
-type PropsWeControl = 'as' | 'children' | 'refName' | 'className'
+type PropsWeControl = 'as' | 'children' | 'refName'
 
 // Resolve the props of the component, but ensure to omit certain props that we control
 type CleanProps<
@@ -38,17 +38,6 @@ export type Props<
   TTag extends ReactTag,
   TOmitableProps extends PropertyKey = __
 > = CleanProps<TTag, TOmitableProps> & OurProps<TTag>
-
-type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never }
-export type XOR<T, U> = T | U extends __
-  ? never
-  : T extends __
-    ? U
-    : U extends __
-      ? T
-      : T | U extends object
-        ? (Without<T, U> & U) | (Without<U, T> & T)
-        : T | U
 
 export type PropsAdaptor<
   TTag extends ElementType = ElementType,

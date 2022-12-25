@@ -4,8 +4,7 @@ export type ApiErrors = {
   [FieldName: string]: ApiErrors | ApiErrors[] | string[];
 };
 
-export function apiToFormErrors(errors: ApiErrors) {
-  // todo: handle ninja errors
+export function drfErrorsAdaptor(errors: ApiErrors) {
   function handleObject(err: ApiErrors) {
     const formErrors: FieldErrors = {};
 

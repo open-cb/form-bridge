@@ -1,13 +1,11 @@
-import get from 'lodash-es/get';
 import pick from 'lodash-es/pick';
 import omit from 'lodash-es/omit';
-import unset from 'lodash-es/unset';
 import merge from 'lodash-es/merge';
 
 import type {
   Control, FieldPath, FieldPathValue, UseFormStateReturn,
   RegisterOptions, ControllerFieldState, ControllerRenderProps,
-  FieldValues,
+  FieldValues, ValidationRule,
 } from 'react-hook-form';
 import React, { ForwardedRef, Fragment } from 'react';
 import { Controller as BaseController, useFormContext } from 'react-hook-form';
@@ -18,8 +16,9 @@ import { validationRuleProps } from '../constants';
 import { Props, PropsAdaptor, ReactTag } from '../types';
 import {
   forwardRefWithAs, getConfigForComponent,
-  messagifyValidationRules, render,
+  messagifyValidationRules, patternsMap, render,
 } from '../utils';
+import { useStaticErrors } from './StaticErrors';
 
 export interface RenderProps<
   TFieldValues extends FieldValues = FieldValues,
@@ -34,7 +33,7 @@ type MoreProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
   TTag extends ReactTag = typeof Fragment
-> = Omit<RegisterOptions<TFieldValues, TName>, 'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled'>
+> = Partial<Omit<RegisterOptions<TFieldValues, TName>, 'valueAsNumber' | 'valueAsDate' | 'setValueAs' | 'disabled' | 'pattern'>>
   & Props<TTag>
 
 export interface BaseControllerProps<
@@ -48,6 +47,7 @@ export interface BaseControllerProps<
   control?: Control<TFieldValues>;
   render?: (renderProps: RenderProps<TFieldValues, TName>) => React.ReactElement;
   propsAdapter?: PropsAdaptor<TTag, TFieldValues, TName>;
+  pattern?: ValidationRule<RegExp> | keyof typeof patternsMap;
 }
 
 export default forwardRefWithAs(function Controller<
@@ -55,8 +55,8 @@ export default forwardRefWithAs(function Controller<
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
   TTag extends ReactTag = typeof Fragment
 >(props: BaseControllerProps<TFieldValues, TName, TTag> & MoreProps<TFieldValues, TName, TTag>, ref: ForwardedRef<HTMLElement>) {
-  const form = useFormContext();
   const config = useFormConfig();
+  const {unsetFieldError, getFieldError} = useStaticErrors();
 
   const defaultProps = config.components?.Controller?.defaultProps;
   const propsAdapters = config.components?.Controller?.propsAdapters;
@@ -80,7 +80,7 @@ export default forwardRefWithAs(function Controller<
         const formOnChange = renderProps.field.onChange;
         renderProps.field.onChange = (e) => {
           // eslint-disable-next-line no-underscore-dangle
-          unset((form.control as any)._apiErrors, props.name);
+          unsetFieldError(props.name);
           if (typeof e?.target?.value === 'string') {
             e.target.value = e.target.value.trim();
           }
@@ -91,7 +91,7 @@ export default forwardRefWithAs(function Controller<
         renderProps.fieldState = new Proxy(renderProps.fieldState, {
           get(target: ControllerFieldState, prop: string | symbol, receiver: any): any {
             if (prop === 'error') {
-              return Reflect.get(target, prop, receiver) ?? get((form.control as any)._apiErrors, props.name);
+              return Reflect.get(target, prop, receiver) ?? getFieldError(props.name);
             }
 
             return Reflect.get(target, prop, receiver);

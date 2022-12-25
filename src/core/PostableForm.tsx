@@ -9,7 +9,7 @@ import { useStaticErrors } from './StaticErrors';
 type FormProps = Omit<ComponentProps<'form'>, 'method' | 'action' | 'onSubmit' | 'target' | 'onInvalid'>;
 
 export interface PostableFormProps<
-  SubmitResponse = unknown,
+  SubmitResponse = any,
   TFieldValues extends FieldValues = FieldValues,
   TransformedData = unknown,
 > extends FormProps {
@@ -24,7 +24,7 @@ export interface PostableFormProps<
 }
 
 export default forwardRef(function PostableForm<
-  SubmitResponse = unknown,
+  SubmitResponse = any,
   TFieldValues extends FieldValues = FieldValues,
   TransformedData = unknown,
 >(props: PropsWithChildren<PostableFormProps<SubmitResponse, TFieldValues, TransformedData>>, ref: ForwardedRef<HTMLFormElement>) {
@@ -45,12 +45,14 @@ export default forwardRef(function PostableForm<
       {...restProps}
       ref={ref}
       onSubmit={form.handleSubmit(async (data, event) => {
+        event?.preventDefault();
         let response: any;
 
         try {
           response = await onSubmit?.(transformData(data), { method, action }, event);
         } catch (err: any) {
-          staticErrors.setErrors(apiErrorAdaptor?.(err));
+          const body = err.response?.data;
+          staticErrors.setErrors(apiErrorAdaptor?.(body));
           return onSubmitError?.(err);
         }
 

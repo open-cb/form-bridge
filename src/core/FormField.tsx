@@ -4,11 +4,11 @@ import type { ReactNode } from 'react';
 import get from 'lodash-es/get';
 import pick from 'lodash-es/pick';
 import omit from 'lodash-es/omit';
-import unset from 'lodash-es/unset';
 
 import type { UseFormRegisterReturn, FieldError, RegisterOptions, InternalFieldName } from 'react-hook-form';
 import { useFormContext } from 'react-hook-form';
 
+import { useStaticErrors } from './StaticErrors';
 import { messagifyValidationRules, patternsMap } from '../utils';
 import { validationRuleProps } from '../constants';
 
@@ -37,6 +37,7 @@ export default function FormField<T extends InternalFieldName>({
   ...props
 }: FormInputProps<T>) {
   const form = useFormContext();
+  const {getFieldError, unsetFieldError} = useStaticErrors();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, rerender] = useState(false);
   const fieldRef = useRef<HTMLInputElement>();
@@ -57,14 +58,11 @@ export default function FormField<T extends InternalFieldName>({
     fieldRef.current = instance;
   };
 
-  const errors = (get(form.formState.errors, name) ??
-    // eslint-disable-next-line no-extra-parens,no-underscore-dangle
-    get((form.control as any)._apiErrors, name)) as unknown as FieldError;
+  const errors = (get(form.formState.errors, name) ?? getFieldError(name)) as unknown as FieldError;
 
   useEffect(() => {
     const fn = () => {
-      // eslint-disable-next-line no-underscore-dangle
-      unset((form.control as any)._apiErrors, name);
+      unsetFieldError(name);
       rerender((e) => !e);
     };
 

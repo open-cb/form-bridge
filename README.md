@@ -7,7 +7,7 @@ NOTE: This package is in very early development stages.
 ## Example
 
 ```tsx
-import {Form, Controller} from '@cb-pkg/react-forms';
+import {Form, Controller} from '@cb-pkg/form-bridge';
 import {TextField} from '@mui/material';
 
 function Foo() {

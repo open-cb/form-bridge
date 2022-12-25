@@ -13,7 +13,7 @@
       "assets": "dist/*.tgz"
     }],
     ["@semantic-release/exec", {
-      "publishCmd": "echo 'HEREHEHEHEH' && cat .npmrc && cd dist && npm publish"
+      "publishCmd": "cd dist && rm -rf *.tgz && npm publish"
     }]
   ]
 }

@@ -56,6 +56,7 @@ export default function App() {
           <div>
             <Controller
               as={TextField}
+              className="fsdfdsfs"
               name='textField'
               label='Test Field'
             />
