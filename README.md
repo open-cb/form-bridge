@@ -12,7 +12,7 @@ import Axios from 'axios';
 import {drfErrorsAdaptor} from '@cb-pkg/form-bridge/adaptors/django';
 import {TextFieldPropsAdaptor} from '@cb-pkg/form-bridge/adaptors/mui';
 
-function Foo() {
+function Login() {
   return (
     <Form
       action="/api/login"

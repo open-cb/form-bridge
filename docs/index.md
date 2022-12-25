@@ -24,7 +24,7 @@ npm install @hookform/devtools --save-dev
 
 === "Typescript"
 
-    ``` ts title="formConfig.ts"
+    ``` ts title="Login.tsx"
     import {Form, Controller} from '@cb-pkg/form-bridge';
     import {TextField, Button} from '@mui/material';
     import Axios from 'axios';
@@ -32,7 +32,7 @@ npm install @hookform/devtools --save-dev
     import {drfErrorsAdaptor} from '@cb-pkg/form-bridge/adaptors/django';
     import {TextFieldPropsAdaptor} from '@cb-pkg/form-bridge/adaptors/mui';
     
-    function Foo() {
+    function Login() {
       return (
         <Form
           action="/api/login"
@@ -70,7 +70,7 @@ npm install @hookform/devtools --save-dev
 
 === "Javascript"
 
-    ``` js title="formConfig.js"
+    ``` js title="Login.jsx"
     import {Form, Controller} from '@cb-pkg/form-bridge';
     import {TextField, Button} from '@mui/material';
     import Axios from 'axios';
@@ -78,7 +78,7 @@ npm install @hookform/devtools --save-dev
     import {drfErrorsAdaptor} from '@cb-pkg/form-bridge/adaptors/django';
     import {TextFieldPropsAdaptor} from '@cb-pkg/form-bridge/adaptors/mui';
     
-    function Foo() {
+    function Login() {
       return (
         <Form
           action="/api/login"
