@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
+site_name: Form Bridge
+copyright: Proudly developed at Carte Blanche Innovation Integrated
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Carte-Blanche-Innovation-Integrated
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/carteblancheii
+    - icon: material/earth
+      link: https://www.carteblanche.tech/
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - pymdownx.highlight:
+      anchor_linenums: true
+      linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.indexes
+    - content.tabs.link
+    - content.code.annotate

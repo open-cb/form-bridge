@@ -8,7 +8,7 @@ import type {
   FieldValues, ValidationRule,
 } from 'react-hook-form';
 import React, { ForwardedRef, Fragment } from 'react';
-import { Controller as BaseController, useFormContext } from 'react-hook-form';
+import { Controller as BaseController } from 'react-hook-form';
 
 import { useFormConfig } from './FormConfig';
 

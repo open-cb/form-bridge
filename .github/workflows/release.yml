@@ -3,7 +3,20 @@ on:
   push:
     branches:
       - master
+permissions:
+  contents: write
 jobs:
+  deploy:
+    name: Deploy docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - run: pip install mkdocs-material jsx-lexer
+      - run: mkdocs gh-deploy --force
+
   release:
     name: Release
     runs-on: ubuntu-latest
